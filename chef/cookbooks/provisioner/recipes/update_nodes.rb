@@ -39,7 +39,11 @@ if not nodes.nil? and not nodes.empty?
     end
     mac_list.sort!
     admin_data_net = Chef::Recipe::Barclamp::Inventory.get_network_by_type(mnode, "admin")
-    nodeaddr = sprintf("%X",admin_data_net.address.split('.').inject(0){|acc,i|(acc << 8)+i.to_i})
+    begin
+      nodeaddr = sprintf("%X",admin_data_net.address.split('.').inject(0){|acc,i|(acc << 8)+i.to_i})
+    rescue
+      nodeaddr = sprintf("%X",mnode[:ipaddress].split('.').inject(0){|acc,i|(acc << 8)+i.to_i})
+    end
     pxefile="#{pxecfg_dir}/#{nodeaddr}"
     uefifile="#{uefi_dir}/#{nodeaddr}.conf"
 
