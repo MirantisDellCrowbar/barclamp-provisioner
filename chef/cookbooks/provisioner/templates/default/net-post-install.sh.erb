@@ -68,6 +68,9 @@ wget -q <%=@web_path%>/crowbar_join.sh -O- > /target/etc/init.d/crowbar_join.sh
 cat > /target/update_system2.sh <<"EOF"
 #!/bin/bash
 
+
+
+
 key_re='crowbar\.install\.key=([^ ]+)'
 if [[ $(cat /proc/cmdline) =~ $key_re ]]; then
     export CROWBAR_KEY="${BASH_REMATCH[1]}"
@@ -92,6 +95,12 @@ export LC_ALL=C LANGUAGE=C LANG=C
 apt-get -y --force-yes remove apparmor
 apt-get -y --force-yes install screen
 sleep 30
+
+#install tboot in front of kernel and update grub cfg
+apt-get update
+apt-get -y --force-yes install tboot
+mv /etc/grub.d/20_linux_tboot /etc/grub.d/09_linux_tboot
+update-grub
 
 post_state $HOSTNAME "installed"
 
